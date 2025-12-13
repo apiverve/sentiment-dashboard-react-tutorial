@@ -5,11 +5,10 @@ import { Doughnut } from 'react-chartjs-2';
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// ============================================
-// CONFIGURATION - Add your API key here
+// API Configuration
+// Create a .env file with: VITE_API_KEY=your-api-key-here
 // Get a free key at: https://dashboard.apiverve.com
-// ============================================
-const API_KEY = 'your-api-key-here';
+const API_KEY = import.meta.env.VITE_API_KEY;
 const API_URL = 'https://api.apiverve.com/v1/sentimentanalysis';
 
 function App() {
@@ -35,8 +34,8 @@ function App() {
   const analyzeSentiment = async () => {
     if (!text.trim()) return;
 
-    if (API_KEY === 'your-api-key-here') {
-      setError('Please add your API key to src/App.jsx');
+    if (!API_KEY) {
+      setError('Add your API key to .env file (VITE_API_KEY=your-key)');
       return;
     }
 

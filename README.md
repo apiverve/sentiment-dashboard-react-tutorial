@@ -122,17 +122,9 @@ const response = await fetch(API_URL, {
   "status": "ok",
   "error": null,
   "data": {
-    "sentiment": "positive",
-    "sentimentText": "Positive",
-    "comparative": 0.625,
-    "calculation": [
-      { "love": 3 },
-      { "amazing": 2 }
-    ],
-    "tokens": ["i", "love", "this", "product", "its", "amazing"],
-    "words": ["love", "amazing"],
-    "positive": ["love", "amazing"],
-    "negative": []
+    "comparative": 0.25,
+    "sentimentText": "positive",
+    "sentiment": 3
   }
 }
 ```

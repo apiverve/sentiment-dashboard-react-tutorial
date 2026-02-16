@@ -1,6 +1,7 @@
 # Sentiment Dashboard | APIVerve API Tutorial
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
 [![React](https://img.shields.io/badge/React-18-61dafb)](src/App.jsx)
 [![Chart.js](https://img.shields.io/badge/Chart.js-4-ff6384)](package.json)
 [![APIVerve | Sentiment Analysis](https://img.shields.io/badge/APIVerve-Sentiment_Analysis-purple)](https://apiverve.com/marketplace/sentimentanalysis?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial)

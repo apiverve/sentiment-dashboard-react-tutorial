@@ -5,25 +5,27 @@ import { Doughnut } from 'react-chartjs-2';
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// API Configuration
-// Create a .env file with: VITE_API_KEY=your-api-key-here
-// Get a free key at: https://dashboard.apiverve.com
-const API_KEY = import.meta.env.VITE_API_KEY;
-const API_URL = 'https://api.apiverve.com/v1/sentimentanalysis';
+/**
+ * Sentiment Dashboard, an APIVerve template.
+ *
+ * Analyze reviews, feedback or messages and track the mix over time (kept in this browser).
+ * The page calls /api/sentiment (api/sentiment.js), which holds your API key and calls
+ * the Sentiment Analysis API: https://apiverve.com/marketplace/sentimentanalysis
+ */
 
 function App() {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [history, setHistory] = useState([]);
-
-  // Load history from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('sentimentHistory');
-    if (saved) {
-      setHistory(JSON.parse(saved));
+  // Read saved history once, as the initial state. Loading it in an effect instead races
+  // the save effect below, which would write [] over it first.
+  const [history, setHistory] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('sentimentHistory')) || [];
+    } catch {
+      return [];
     }
-  }, []);
+  });
 
   // Save history to localStorage when it changes
   useEffect(() => {
@@ -34,32 +36,24 @@ function App() {
   const analyzeSentiment = async () => {
     if (!text.trim()) return;
 
-    if (!API_KEY) {
-      setError('Add your API key to .env file (VITE_API_KEY=your-key)');
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch('/api/sentiment', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': API_KEY
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text })
       });
 
       const data = await response.json();
 
-      if (data.status === 'ok' && data.data) {
+      if (response.ok) {
         const result = {
           id: Date.now(),
           text: text.slice(0, 100) + (text.length > 100 ? '...' : ''),
-          sentiment: data.data.sentimentText || data.data.sentiment,
-          score: data.data.comparative || 0,
+          sentiment: data.sentimentText,
+          score: data.comparative || 0,
           timestamp: new Date().toLocaleString()
         };
 
@@ -69,8 +63,7 @@ function App() {
         setError(data.error || 'Failed to analyze sentiment');
       }
     } catch (err) {
-      setError('API request failed. Check your API key.');
-      console.error('API Error:', err);
+      setError('Couldn’t reach the server. Try again.');
     } finally {
       setLoading(false);
     }
@@ -124,7 +117,8 @@ function App() {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Enter text to analyze sentiment..."
+            placeholder="Paste a review, support ticket or message..."
+            maxLength={2000}
             rows={4}
           />
           <button
@@ -233,7 +227,7 @@ function App() {
       <footer>
         <p>
           Powered by{' '}
-          <a href="https://apiverve.com/marketplace/sentimentanalysis?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial"
+          <a href="https://apiverve.com/marketplace/sentimentanalysis?utm_source=github&utm_medium=template&utm_campaign=sentiment-dashboard-react-tutorial"
              target="_blank"
              rel="noopener noreferrer">
             APIVerve Sentiment Analysis API

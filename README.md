@@ -1,36 +1,31 @@
-# Sentiment Dashboard | APIVerve API Tutorial
+# Sentiment Dashboard | APIVerve Template
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
-[![React](https://img.shields.io/badge/React-18-61dafb)](src/App.jsx)
-[![Chart.js](https://img.shields.io/badge/Chart.js-4-ff6384)](package.json)
-[![APIVerve | Sentiment Analysis](https://img.shields.io/badge/APIVerve-Sentiment_Analysis-purple)](https://apiverve.com/marketplace/sentimentanalysis?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial)
+[![React](https://img.shields.io/badge/React-18-61DAFB)](package.json)
+[![Vite](https://img.shields.io/badge/Vite-5-646CFF)](package.json)
+[![APIVerve | Sentiment Analysis](https://img.shields.io/badge/APIVerve-Sentiment_Analysis-purple)](https://apiverve.com/marketplace/sentimentanalysis?utm_source=github&utm_medium=template&utm_campaign=sentiment-dashboard-react-tutorial)
 
-A beautiful, interactive sentiment analysis dashboard built with React and Chart.js. Analyze text sentiment in real-time and visualize trends with charts.
+Paste reviews, support tickets or messages and see whether each one reads positive, negative or neutral. The dashboard keeps a running chart and history in your browser.
 
-![Screenshot](https://raw.githubusercontent.com/apiverve/sentiment-dashboard-react-tutorial/main/screenshot.jpg)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fapiverve%2Fsentiment-dashboard-react-tutorial&project-name=sentiment-dashboard&repository-name=sentiment-dashboard&env=APIVERVE_API_KEY&envDescription=Your%20APIVerve%20API%20key.%20Free%20to%20create%2C%20no%20card%20needed.&envLink=https%3A%2F%2Fdashboard.apiverve.com%2Fsignup%3Fapi%3Dsentimentanalysis%26utm_source%3Dvercel%26utm_medium%3Dtemplate%26utm_campaign%3Dsentiment-dashboard-react-tutorial)
 
----
-
-### Get Your Free API Key
-
-This tutorial requires an APIVerve API key. **[Sign up free](https://dashboard.apiverve.com?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial)** - no credit card required.
+![Sentiment Dashboard charting five analyzed reviews](https://raw.githubusercontent.com/apiverve/sentiment-dashboard-react-tutorial/main/screenshot.png)
 
 ---
 
-## Features
+### Get your free API key
 
-- Real-time sentiment analysis (positive, negative, neutral)
-- Interactive doughnut chart visualization
-- Analysis history with localStorage persistence
-- Quick stats dashboard
-- Dark mode UI with modern design
-- Copy-to-clipboard functionality
-- Responsive layout for all devices
+This template needs an APIVerve API key. **[Sign up free](https://dashboard.apiverve.com/signup?api=sentimentanalysis&utm_source=github&utm_medium=template&utm_campaign=sentiment-dashboard-react-tutorial)**, no credit card required.
 
-## Quick Start
+---
 
-1. **Clone this repository**
+## Deploy in one click
+
+Click **Deploy with Vercel** above. Vercel copies this repo to your GitHub account, asks for your `APIVERVE_API_KEY`, and gives you a live URL about a minute later.
+
+## Run it locally
+
+1. **Clone the repository**
    ```bash
    git clone https://github.com/apiverve/sentiment-dashboard-react-tutorial.git
    cd sentiment-dashboard-react-tutorial
@@ -42,142 +37,73 @@ This tutorial requires an APIVerve API key. **[Sign up free](https://dashboard.a
    ```
 
 3. **Add your API key**
-
-   Open `.env` and add your API key:
+   ```bash
+   cp .env.example .env
    ```
-   VITE_API_KEY=your-api-key-here
-   ```
+   Then open `.env` and set `APIVERVE_API_KEY`.
 
-4. **Start the development server**
+4. **Start it**
    ```bash
    npm run dev
    ```
 
-5. **Open in browser**
+5. **Open** `http://localhost:5173`
 
-   Navigate to `http://localhost:5173`
+`npm run dev` serves the page and runs the `api/` functions together, the same way Vercel does, so you don't need the Vercel CLI.
 
-## Project Structure
+## How it works
+
+1. The page (`src/App.jsx`) calls `POST /api/sentiment`.
+2. `api/sentiment.js` checks the input, then calls Sentiment Analysis. Your API key stays on the server and never reaches the browser.
+3. The page shows the result.
 
 ```
-sentiment-dashboard-react-tutorial/
-├── src/
-│   ├── App.jsx          # Main component with API logic
-│   ├── App.css          # Styling
-│   └── main.jsx         # React entry point
-├── index.html           # HTML template
-├── package.json         # Dependencies
-├── vite.config.js       # Vite configuration
-├── .env                 # Environment variables (add your API key)
-├── screenshot.jpg       # Preview image
-├── LICENSE              # MIT license
-├── .gitignore           # Git ignore rules
-└── README.md            # This file
+├── api/sentiment.js     # Vercel function: checks input, calls APIVerve with your key
+├── lib/apiverve.js      # Shared by api/: key check, rate limit, the APIVerve call
+├── lib/dev-api.js       # Runs api/ locally under `npm run dev` (Vercel ignores it)
+├── src/App.jsx          # The page (React)
+├── vite.config.js
+├── .env.example         # Copy to .env and add your key
+└── package.json
 ```
 
-## How It Works
-
-1. **User enters text** - Type or paste text to analyze
-2. **API request** - Sends text to APIVerve Sentiment Analysis
-3. **Response processing** - Extracts sentiment and score
-4. **Visualization** - Updates chart and stats in real-time
-5. **History storage** - Saves results to localStorage
-
-### The API Call
+### The API call
 
 ```javascript
-const response = await fetch(API_URL, {
+const res = await fetch('https://api.apiverve.com/v1/sentimentanalysis', {
   method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'x-api-key': API_KEY
-  },
+  headers: { 'x-api-key': process.env.APIVERVE_API_KEY, 'Content-Type': 'application/json' },
   body: JSON.stringify({ text })
 });
+const { data } = await res.json();
+// data.sentimentText → "very positive", data.comparative, data.isNegative
 ```
 
-## API Reference
+## Before you share your URL
 
-**Endpoint:** `POST https://api.apiverve.com/v1/sentimentanalysis`
+Once deployed, anyone who finds your URL can use it on your API key. Each visitor can make 10 requests a minute, which is fine for a demo. The limit is kept in memory, so it isn't shared between serverless instances. For production:
 
-**Headers:**
+- Put the page behind your own sign-in, or
+- Move the limit to a shared store such as [Upstash Redis](https://upstash.com/), or
+- Call the route only from your own backend.
 
-| Header | Value |
-|--------|-------|
-| `Content-Type` | `application/json` |
-| `x-api-key` | Your API key |
+## Ideas to extend it
 
-**Request Body:**
+- Score each new review or ticket as it comes in, and flag the negative ones
+- Store results in a database instead of the browser, to chart trends over time
+- Add [Keyword Extractor](https://apiverve.com/marketplace/keywordextractor?utm_source=github&utm_medium=template&utm_campaign=sentiment-dashboard-react-tutorial) to see what the negative messages are about
 
-```json
-{
-  "text": "I love this product! It's amazing."
-}
-```
+## API reference
 
-**Example Response:**
+- [Sentiment Analysis](https://apiverve.com/marketplace/sentimentanalysis?utm_source=github&utm_medium=template&utm_campaign=sentiment-dashboard-react-tutorial): `POST https://api.apiverve.com/v1/sentimentanalysis`
+- [Full documentation](https://docs.apiverve.com?utm_source=github&utm_medium=template&utm_campaign=sentiment-dashboard-react-tutorial)
 
-```json
-{
-  "status": "ok",
-  "error": null,
-  "data": {
-    "comparative": 0.25,
-    "sentimentText": "positive",
-    "sentiment": 3
-  }
-}
-```
+## Tech stack
 
-## Use Cases
-
-Sentiment analysis is powerful for:
-
-- **Customer Feedback** - Analyze reviews and support tickets
-- **Social Media Monitoring** - Track brand sentiment
-- **Content Moderation** - Detect negative or toxic content
-- **Market Research** - Understand public opinion
-- **Survey Analysis** - Process open-ended responses
-- **Competitive Analysis** - Compare brand perception
-
-## Customization Ideas
-
-- Add sentiment trends over time with line charts
-- Export analysis history to CSV
-- Add batch analysis for multiple texts
-- Integrate with Twitter/X API for live monitoring
-- Add word cloud visualization
-- Support multiple languages
-
-## Tech Stack
-
-- **React 18** - UI framework
-- **Vite** - Build tool and dev server
-- **Chart.js** - Data visualization
-- **react-chartjs-2** - React wrapper for Chart.js
-
-## Related APIs
-
-Explore more APIs at [APIVerve](https://apiverve.com/marketplace?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial):
-
-- [Text Summarizer](https://apiverve.com/marketplace/textsummarizer?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial) - Summarize long texts
-- [Language Detector](https://apiverve.com/marketplace/languagedetector?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial) - Detect text language
-- [Keyword Extractor](https://apiverve.com/marketplace/keywordextractor?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial) - Extract keywords from text
-
-## Free Plan Note
-
-This tutorial works with the free APIVerve plan. Some APIs may have:
-- **Locked fields**: Premium response fields return `null` on free plans
-- **Ignored parameters**: Some optional parameters require a paid plan
-
-The API response includes a `premium` object when limitations apply. [Upgrade anytime](https://dashboard.apiverve.com/plans) to unlock all features.
+- **React 18** and **Vite 5** for the page
+- **Vercel Functions** in `api/` for the server side (Node.js 20+)
+- Deploys to Vercel as-is: Vite builds the page, and each file in `api/` becomes a function
 
 ## License
 
-MIT - see [LICENSE](LICENSE)
-
-## Links
-
-- [Get API Key](https://dashboard.apiverve.com?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial) - Sign up free
-- [APIVerve Marketplace](https://apiverve.com/marketplace?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial) - Browse 300+ APIs
-- [Sentiment Analysis API](https://apiverve.com/marketplace/sentimentanalysis?utm_source=github&utm_medium=tutorial&utm_campaign=sentiment-dashboard-react-tutorial) - API details
+MIT. See [LICENSE](LICENSE).
